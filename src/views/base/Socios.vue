@@ -55,7 +55,7 @@
         <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1">
           Info modal
         </b-button>
-        <b-button size="sm" @click.stop="row.toggleDetails">
+        <b-button size="sm" @click.stop="row.toggleDetails" @click="infoDetails(row.item)">
           {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
         </b-button>
       </template>
@@ -64,13 +64,12 @@
             <b-col cols="8">
               <b-card title="Datos Completos">
               <ul>
-                <li> {{row}}</li>
-                <li>Nombres: {{modalInfo.nombre}}</li>
-                <li>Apellidos: {{modalInfo.apellido}}</li>
-                <li>Cedula de Identidad: {{modalInfo.cedula}}</li>
-                <li>Fecha de Nacimiento: {{modalInfo.fnacimiento}}</li>
-                <li>Condición: {{modalInfo.condicion}}</li>
-                <li>Fecha de Ingreso: {{modalInfo.fecha}}</li>
+                <li>Nombres: {{row.item.nombre}}</li>
+                <li>Apellidos: {{row.item.apellido}}</li>
+                <li>Cedula de Identidad: {{row.item.cedula}}</li>
+                <li>Fecha de Nacimiento: {{row.item.fnacimiento}}</li>
+                <li>Condición: {{row.item.condicion}}</li>
+                <li>Fecha de Ingreso: {{row.item.fecha}}</li>
                 
               </ul>
             </b-card>
@@ -78,7 +77,7 @@
             <b-col cols="4">
               <b-card>
                 <!-- COLOCAR LA IMAGEN -->                
-                  <b-img :src="modalInfo.imagen" fluid :alt="'Foto del Asociado N° '+modalInfo.imagen" />
+                  <b-img :src="row.item.imagen" fluid :alt="'Foto del Asociado N° '+row.item.imagen" />
               </b-card>
             </b-col>                  
         </b-card-group>
@@ -220,7 +219,7 @@ export default {
     infoDetails (item) {
 
       let fecha = moment(item.fecha).format('DD/MM/YYYY')
-      this.modalInfo.id = item.id
+      this.id_item = item.id
       this.modalInfo.nsocio = item.nsocio
       this.modalInfo.nombre = item.nombre
       this.modalInfo.apellido = item.apellido
@@ -231,7 +230,7 @@ export default {
       this.modalInfo.imagen = item.imagen
       this.modalInfo.mensaje = this.mensajeRespuesta
       this.modalInfo.title = 'Actualizando Asociado'
-      detailsShowing = true
+      console.log(item)
       
     },
     handleSubmit () {
@@ -243,7 +242,7 @@ export default {
       this.currentPage = 1
     },
     sociosAll () {
-      axios.get('https://opserc.herokuapp.com/api/socios')
+      axios.get('http://localhost:3000/api/socios')
         .then(
           result => {
             this.items = result.data;
@@ -259,7 +258,7 @@ export default {
       let condicion = this.modalInfo.condicion
       let fnacimiento = this.modalInfo.fnacimiento
       let imagen = this.modalInfo.imagen
-      axios.put('https://opserc.herokuapp.com/api/socios/'+id, {nsocio:nsocio, nombre:nombre, apellido:apellido, cedula:cedula, condicion:condicion, fnacimiento:fnacimiento, imagen:imagen})
+      axios.put('http://localhost:3000/api/socios/'+id, {nsocio:nsocio, nombre:nombre, apellido:apellido, cedula:cedula, condicion:condicion, fnacimiento:fnacimiento, imagen:imagen})
         .then( (res) => {
           this.sociosAll()
           this.mensajeRespuesta = res.data.message
